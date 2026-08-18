@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KOBI Portal - Status Monitor</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,700;0,800;0,900;1,900&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#000000;
+    --paper:#F8FAFC;
+    --orange:#FF791A;
+    --blue:#4781D1;
+    --red:#F91A1A;
+    --up:#1a9c4a;
+    --down:#F91A1A;
+    --unknown:#9a9a90;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{-webkit-font-smoothing:antialiased;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Plus Jakarta Sans', sans-serif;
+    min-height:100vh;
+    padding:0 0 80px;
+  }
+  .mono{
+    font-family:'JetBrains Mono', monospace;
+    font-weight:700;
+  }
+  header{
+    background:#fff;
+    border-bottom:4px solid var(--ink);
+    padding:18px clamp(16px,4vw,48px);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand .mark{ width:34px; height:34px; flex-shrink:0; }
+  .brand-text{line-height:1;}
+  .brand-text .t1{ font-size:16px; font-weight:900; font-style:italic; letter-spacing:-0.3px; }
+  .brand-text .t2{
+    font-family:'JetBrains Mono', monospace;
+    font-size:9px; font-weight:800; letter-spacing:2px;
+    color:#6b6b62; margin-top:4px; text-transform:uppercase;
+  }
+  .badge-updated{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; font-weight:800;
+    border:2px solid var(--ink);
+    background:#fff;
+    padding:6px 10px;
+    letter-spacing:0.5px;
+    box-shadow:2px 2px 0px var(--ink);
+  }
+  .header-strip{ display:grid; grid-template-columns:repeat(4,1fr); height:6px; }
+  .header-strip div:nth-child(1){background:var(--orange);}
+  .header-strip div:nth-child(2){background:var(--blue);}
+  .header-strip div:nth-child(3){background:var(--red);}
+  .header-strip div:nth-child(4){background:var(--ink);}
+  .hero{
+    padding:clamp(28px,6vw,56px) clamp(16px,4vw,48px) clamp(20px,4vw,40px);
+    border-bottom:4px solid var(--ink);
+    background:#fff;
+  }
+  .hero-grid{
+    display:grid; grid-template-columns: 1fr auto; gap:24px; align-items:end;
+    max-width:1100px; margin:0 auto;
+  }
+  .status-eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px; font-weight:800; letter-spacing:2px;
+    color:#6b6b62; margin-bottom:14px; text-transform:uppercase;
+  }
+  .status-line{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+  .status-dot{
+    width:22px; height:22px; border:3px solid var(--ink); border-radius:50%;
+    flex-shrink:0; position:relative; box-shadow:2px 2px 0px var(--ink);
+  }
+  .status-dot::after{ content:""; position:absolute; inset:3px; border-radius:50%; background:var(--unknown); }
+  .status-dot.up::after{background:var(--up);}
+  .status-dot.down::after{background:var(--down);}
+  .status-dot.pulse::after{animation:pulse 1.6s ease-in-out infinite;}
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+  .status-word{ font-size:clamp(38px,7vw,64px); line-height:0.95; letter-spacing:-1px; font-weight:900; font-style:italic; }
+  .status-word .up{color:var(--up);}
+  .status-word .down{color:var(--down);}
+  .status-sub{ font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:600; color:#4a4a44; margin-top:10px; }
+  .last-checked{ text-align:right; font-family:'JetBrains Mono', monospace; }
+  .last-checked .label{font-size:10px; font-weight:800; letter-spacing:1.5px; color:#6b6b62; margin-bottom:6px;}
+  .last-checked .val{font-size:14px; font-weight:800;}
+  .section-label{
+    max-width:1100px; margin:0 auto; padding:20px clamp(16px,4vw,48px) 0;
+    display:flex; align-items:center; gap:10px;
+  }
+  .section-label .sq{width:14px; height:14px; background:var(--orange); border:2px solid var(--ink);}
+  .section-label h2{ font-size:15px; font-weight:900; letter-spacing:0.3px; text-transform:uppercase; font-style:italic; }
+  .section-label .count{
+    font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:800;
+    border:2px solid var(--ink); background:#fff; padding:2px 8px;
+    margin-left:auto; box-shadow:2px 2px 0px var(--ink);
+  }
+  .panel-wrap{ max-width:1100px; margin:0 auto; padding:16px clamp(16px,4vw,48px) 8px; }
+  .panel{ border:3px solid var(--ink); background:#fff; padding:18px; box-shadow:6px 6px 0px var(--ink); }
+  .panel-hint{ font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:600; color:#6b6b62; margin-bottom:14px; }
+  .strip{ display:grid; grid-template-columns: repeat(auto-fill, minmax(9px,1fr)); gap:3px; }
+  .cell{ aspect-ratio:1/2.2; background:var(--unknown); position:relative; cursor:default; border:1px solid var(--ink); }
+  .cell.up{background:var(--up);}
+  .cell.down{background:var(--down);}
+  .cell:hover::after{
+    content:attr(data-tip); position:absolute; bottom:calc(100% + 6px); left:50%;
+    transform:translateX(-50%); background:var(--ink); color:var(--paper);
+    font-family:'JetBrains Mono', monospace; font-size:10px; font-weight:700;
+    padding:5px 8px; white-space:nowrap; z-index:5; border:2px solid var(--orange);
+  }
+  .strip-axis{
+    display:flex; justify-content:space-between; font-family:'JetBrains Mono', monospace;
+    font-size:10px; font-weight:700; color:#8a8a80; margin-top:8px;
+  }
+  .legend{
+    display:flex; gap:18px; margin-top:16px; flex-wrap:wrap;
+    font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:800;
+  }
+  .legend span{display:flex; align-items:center; gap:6px;}
+  .legend i{width:11px; height:11px; display:inline-block; border:1.5px solid var(--ink);}
+  .legend .up i{background:var(--up);}
+  .legend .down i{background:var(--down);}
+  .legend .unknown i{background:var(--unknown);}
+  .log-wrap{max-width:1100px; margin:0 auto; padding:24px clamp(16px,4vw,48px) 0;}
+  .log-list{
+    border:3px solid var(--ink); background:#fff; max-height:340px;
+    overflow-y:auto; box-shadow:6px 6px 0px var(--ink);
+  }
+  .log-row{
+    display:grid; grid-template-columns: 90px 1fr 90px; gap:12px; align-items:center;
+    padding:11px 16px; border-bottom:1.5px solid #e4e2da;
+    font-family:'JetBrains Mono', monospace; font-size:12.5px;
+  }
+  .log-row:last-child{border-bottom:none;}
+  .log-row .tag{
+    font-weight:800; font-size:10.5px; letter-spacing:0.5px; padding:3px 7px;
+    width:fit-content; color:#fff; border:1.5px solid var(--ink);
+  }
+  .log-row .tag.up{background:var(--up);}
+  .log-row .tag.down{background:var(--down);}
+  .log-row .time{color:#4a4a44; font-weight:700;}
+  .log-row .rel{color:#9a9a90; text-align:right; font-size:11px; font-weight:600;}
+  .empty{
+    font-family:'JetBrains Mono', monospace; font-size:12px; font-weight:600; color:#8a8a80;
+    padding:30px 16px; text-align:center;
+  }
+  .note{
+    max-width:1100px; margin:28px auto 0;
+    margin-left:clamp(16px,4vw,48px); margin-right:clamp(16px,4vw,48px);
+    border-left:5px solid var(--orange);
+    border-top:2px solid var(--ink); border-right:2px solid var(--ink); border-bottom:2px solid var(--ink);
+    padding:12px 16px; background:#fff;
+    font-family:'JetBrains Mono', monospace; font-size:12px; font-weight:600;
+    color:#3a3a34; line-height:1.6;
+  }
+  footer{
+    margin-top:44px; padding:18px clamp(16px,4vw,48px); border-top:4px solid var(--ink); background:#fff;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
+    font-family:'JetBrains Mono', monospace; font-size:10.5px; font-weight:700; color:#8a8a80; letter-spacing:0.3px;
+  }
+  @media (prefers-reduced-motion: reduce){ .status-dot.pulse::after{animation:none;} }
+  @media (max-width:560px){
+    .hero-grid{grid-template-columns:1fr;}
+    .last-checked{text-align:left;}
+    .log-row{grid-template-columns:70px 1fr; grid-template-rows:auto auto; font-size:11.5px;}
+    .log-row .rel{grid-column:2; text-align:left;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 261.46869 226.99396" xmlns="http://www.w3.org/2000/svg">
+      <g transform="translate(-295.59564,-210.42621)">
+        <g transform="translate(-336.30728,-319.91732)">
+          <path style="fill:#ff791a" d="m 791.68952,580.78644 14.526,25.22147 -29.0525,50.44321 -14.5261,-25.22133 z"/>
+          <path style="fill:#ff791a" d="m 762.63752,530.34353 14.526,25.22144 -43.5787,75.66485 43.5784,75.66431 -14.5261,25.22063 -43.5784,-75.66364 -58.1047,100.88599 h -29.0511 z"/>
+          <path style="fill:#000000" d="m 733.58482,681.67242 -14.526,25.22147 29.0525,50.44321 14.5261,-25.22133 z"/>
+          <path style="fill:#f91a1a" d="m 719.05882,706.89389 29.0522,50.44321 h -58.1044 z"/>
+          <path style="fill:#4781d1" d="m 849.79342,681.67232 43.5782,75.66444 h -87.1561 z"/>
+          <path style="fill:#4781d1" d="m 820.74152,631.22939 14.526,25.22147 -58.1038,100.88663 -29.0525,-7.6e-4 z"/>
+          <path style="fill:#000000" d="m 762.63692,631.22982 -14.526,25.22147 29.0525,50.44321 14.5261,-25.22133 z"/>
+          <path style="fill:#000000" d="m 657.72638,661.95062 a 50,50 0 0 1 -25,-43.30127 50,50 0 0 1 25,-43.30127 50,50 0 0 1 50,0 l -25,43.30127 z"/>
+        </g>
+      </g>
+    </svg>
+    <div class="brand-text">
+      <div class="t1">KOBI PORTAL</div>
+      <div class="t2">Status Monitor</div>
+    </div>
+  </div>
+  <div class="badge-updated mono" id="fetchBadge">MEMUAT...</div>
+</header>
+<div class="header-strip"><div></div><div></div><div></div><div></div></div>
+
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="status-eyebrow">STATUS SAAT INI</div>
+      <div class="status-line">
+        <div class="status-dot pulse" id="statusDot"></div>
+        <div class="status-word" id="statusWord">MEMUAT<span>…</span></div>
+      </div>
+      <div class="status-sub" id="statusSub">Menghubungi server data…</div>
+    </div>
+    <div class="last-checked">
+      <div class="label">TERAKHIR DICEK</div>
+      <div class="val" id="lastChecked">—</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-label">
+  <div class="sq"></div>
+  <h2>Panel 24 Jam Terakhir</h2>
+  <div class="count" id="cellCount">0 CEK</div>
+</div>
+
+<div class="panel-wrap">
+  <div class="panel">
+    <div class="panel-hint">Tiap kotak = satu pemeriksaan (± 5 menit). Arahkan kursor untuk lihat jam.</div>
+    <div class="strip" id="strip"></div>
+    <div class="strip-axis">
+      <span id="axisStart">-24 JAM</span>
+      <span>SEKARANG</span>
+    </div>
+    <div class="legend">
+      <span class="up"><i></i> NYALA</span>
+      <span class="down"><i></i> MATI</span>
+      <span class="unknown"><i></i> BELUM ADA DATA</span>
+    </div>
+  </div>
+</div>
+
+<div class="section-label">
+  <div class="sq"></div>
+  <h2>Log Kejadian</h2>
+  <div class="count" id="logCount">0 ENTRI</div>
+</div>
+
+<div class="log-wrap">
+  <div class="log-list" id="logList">
+    <div class="empty">Memuat log…</div>
+  </div>
+</div>
+
+<div class="note">
+  CATATAN: sistem ini dipantau tidak 24/7 secara sengaja — hanya menyala pada jadwal tertentu.
+  Status "MATI" di luar pola biasa kemungkinan disebabkan listrik padam atau kuota jaringan habis,
+  bukan berarti sistem error.
+</div>
+
+<footer>
+  <span>DATA DIPERBARUI OTOMATIS TIAP 5 MENIT</span>
+  <span>KOBI STUDIO · DIBANGUN DENGAN GITHUB ACTIONS</span>
+</footer>
+
+<script>
+// CATATAN FORMAT DATA: halaman ini baca "data/log.json" (bukan status.json) -
+// sesuai file ping-monitor.yml yang dipakai. Formatnya array datar berisi
+// SEMUA riwayat cek (dibatasi 5000 entri terakhir di sisi workflow), BUKAN
+// objek ringkasan siap-pakai. current_status/last_checked/last_24h dihitung
+// di sini (client-side) dari array itu.
+async function loadStatus(){
+  const fetchBadge = document.getElementById('fetchBadge');
+  try{
+    const res = await fetch('data/log.json?_=' + Date.now());
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const log = await res.json();
+    if(!Array.isArray(log)) throw new Error('Format data/log.json tidak sesuai (bukan array).');
+    render(log);
+    fetchBadge.textContent = 'TERSAMBUNG';
+  }catch(err){
+    fetchBadge.textContent = 'GAGAL MUAT DATA';
+    document.getElementById('statusWord').textContent = 'TIDAK DIKETAHUI';
+    document.getElementById('statusSub').textContent = 'Tidak bisa mengambil data/log.json';
+    document.getElementById('logList').innerHTML = '<div class="empty">Data belum tersedia. Pastikan workflow Ping Monitor sudah pernah berjalan.</div>';
+  }
+}
+
+function fmtTime(iso){
+  const d = new Date(iso);
+  return d.toLocaleString('id-ID', {
+    day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', hour12:false
+  });
+}
+
+function relTime(iso){
+  const diffMs = Date.now() - new Date(iso).getTime();
+  const mins = Math.round(diffMs/60000);
+  if(mins < 1) return 'baru saja';
+  if(mins < 60) return mins + ' mnt lalu';
+  const hrs = Math.round(mins/60);
+  if(hrs < 24) return hrs + ' jam lalu';
+  return Math.round(hrs/24) + ' hari lalu';
+}
+
+function render(log){
+  const dot = document.getElementById('statusDot');
+  const word = document.getElementById('statusWord');
+  const sub = document.getElementById('statusSub');
+  const lastChecked = document.getElementById('lastChecked');
+
+  const terurut = [...log].sort((a, b) => new Date(a.time) - new Date(b.time));
+  const terbaru = terurut[terurut.length - 1];
+  const status = terbaru ? terbaru.status : 'unknown';
+
+  dot.className = 'status-dot pulse ' + (status === 'up' ? 'up' : status === 'down' ? 'down' : '');
+
+  if(status === 'up'){
+    word.textContent = 'MENYALA';
+    word.classList.add('up');
+    sub.textContent = 'Sistem merespons normal saat pemeriksaan terakhir.';
+  } else if(status === 'down'){
+    word.textContent = 'MATI';
+    word.classList.add('down');
+    sub.textContent = 'Tidak merespons — bisa jadi sengaja mati, listrik padam, atau kuota habis.';
+  } else {
+    word.textContent = 'BELUM ADA DATA';
+    sub.textContent = 'Menunggu hasil pemeriksaan pertama.';
+  }
+
+  lastChecked.textContent = terbaru ? fmtTime(terbaru.time) : '—';
+
+  const batas24Jam = Date.now() - 24 * 60 * 60 * 1000;
+  const entries = terurut.filter(e => new Date(e.time).getTime() >= batas24Jam);
+
+  const strip = document.getElementById('strip');
+  document.getElementById('cellCount').textContent = entries.length + ' CEK';
+
+  strip.innerHTML = '';
+  entries.forEach(e => {
+    const cell = document.createElement('div');
+    cell.className = 'cell ' + (e.status === 'up' ? 'up' : e.status === 'down' ? 'down' : '');
+    cell.setAttribute('data-tip', fmtTime(e.time) + ' — ' + (e.status === 'up' ? 'NYALA' : 'MATI'));
+    strip.appendChild(cell);
+  });
+  if(entries.length === 0){
+    strip.innerHTML = '<div class="empty" style="grid-column:1/-1;">Belum ada data 24 jam terakhir.</div>';
+  }
+
+  if(entries.length > 0){
+    document.getElementById('axisStart').textContent = fmtTime(entries[0].time).toUpperCase();
+  }
+
+  const logList = document.getElementById('logList');
+  document.getElementById('logCount').textContent = entries.length + ' ENTRI';
+
+  if(entries.length === 0){
+    logList.innerHTML = '<div class="empty">Belum ada entri log.</div>';
+    return;
+  }
+
+  const reversed = [...entries].reverse();
+  logList.innerHTML = reversed.map(e => `
+    <div class="log-row">
+      <div class="tag ${e.status === 'up' ? 'up' : 'down'}">${e.status === 'up' ? 'NYALA' : 'MATI'}</div>
+      <div class="time">${fmtTime(e.time)}</div>
+      <div class="rel">${relTime(e.time)}</div>
+    </div>
+  `).join('');
+}
+
+loadStatus();
+setInterval(loadStatus, 60000); // refresh tiap 1 menit
+</script>
+
+</body>
+</html>
