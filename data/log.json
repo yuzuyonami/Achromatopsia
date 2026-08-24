@@ -8698,5 +8698,10 @@
     "time": "2026-08-24T08:50:22Z",
     "status": "down",
     "http_code": "404"
+  },
+  {
+    "time": "2026-08-24T08:55:20Z",
+    "status": "down",
+    "http_code": "404"
   }
 ]
