@@ -1,0 +1,76 @@
+name: Ping Monitor
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # tiap 5 menit
+  workflow_dispatch:         # bisa juga dijalankan manual dari tab Actions
+
+permissions:
+  contents: write
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Pastikan folder & file log ada (auto-create kalau hilang)
+        run: |
+          mkdir -p data
+          if [ ! -f data/log.json ]; then
+            echo "[] " > data/log.json
+            echo "File data/log.json belum ada, dibuat baru."
+          fi
+
+      - name: Backup file log sebelum diubah
+        run: |
+          cp data/log.json data/log.backup.json
+
+      - name: Cek status URL & catat ke log
+        env:
+          TARGET_URL: "https://scotch-glorified-smashing.ngrok-free.dev"
+        run: |
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          HTTP_CODE=$(curl -o /dev/null -s -m 15 -w "%{http_code}" "$TARGET_URL" || echo "000")
+
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 400 ]; then
+            STATUS="up"
+          else
+            STATUS="down"
+          fi
+
+          echo "Hasil cek: $STATUS (HTTP $HTTP_CODE) pada $TIMESTAMP"
+
+          # Tambahkan entry baru ke log.json pakai Python (biar aman parsing JSON-nya)
+          python3 - <<EOF
+          import json
+
+          path = "data/log.json"
+          try:
+              with open(path, "r") as f:
+                  content = f.read().strip()
+                  log = json.loads(content) if content else []
+          except (FileNotFoundError, json.JSONDecodeError):
+              log = []
+
+          log.append({
+              "time": "$TIMESTAMP",
+              "status": "$STATUS",
+              "http_code": "$HTTP_CODE"
+          })
+
+          # Batasi maksimal 5000 entry terakhir biar file nggak membengkak selamanya
+          log = log[-5000:]
+
+          with open(path, "w") as f:
+              json.dump(log, f, indent=2)
+          EOF
+
+      - name: Commit & push perubahan log
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/log.json data/log.backup.json
+          git diff --quiet --cached || git commit -m "chore: update ping log $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push
