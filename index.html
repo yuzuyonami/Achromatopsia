@@ -7,263 +7,339 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,700;0,800;0,900;1,900&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#000000;
-    --paper:#F8FAFC;
-    --orange:#FF791A;
-    --blue:#4781D1;
-    --red:#F91A1A;
-    --up:#1a9c4a;
-    --down:#F91A1A;
-    --unknown:#9a9a90;
+    --kobi-orange:#FF791A;
+    --kobi-blue:#4781D1;
+    --kobi-red:#F91A1A;
+    --kobi-black:#000000;
+    --kobi-up:#1a9c4a;
+    --kobi-down:#F91A1A;
+    --kobi-unknown:#9a9a90;
   }
-  *{box-sizing:border-box; margin:0; padding:0;}
-  html{-webkit-font-smoothing:antialiased;}
-  body{
-    background:var(--paper);
-    color:var(--ink);
-    font-family:'Plus Jakarta Sans', sans-serif;
+  * { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; }
+  body {
+    margin:0;
     min-height:100vh;
-    padding:0 0 80px;
-  }
-  .mono{
-    font-family:'JetBrains Mono', monospace;
-    font-weight:700;
-  }
-  header{
-    background:#fff;
-    border-bottom:4px solid var(--ink);
-    padding:18px clamp(16px,4vw,48px);
     display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:16px;
-    flex-wrap:wrap;
+    flex-direction:column;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #F8FAFC;
+    color: #000000;
   }
-  .brand{display:flex; align-items:center; gap:12px;}
-  .brand .mark{ width:34px; height:34px; flex-shrink:0; }
-  .brand-text{line-height:1;}
-  .brand-text .t1{ font-size:16px; font-weight:900; font-style:italic; letter-spacing:-0.3px; }
-  .brand-text .t2{
-    font-family:'JetBrains Mono', monospace;
-    font-size:9px; font-weight:800; letter-spacing:2px;
-    color:#6b6b62; margin-top:4px; text-transform:uppercase;
+  ::selection { background: var(--kobi-orange); color:#000; }
+  button { font-family: inherit; }
+
+  .font-mono { font-family: 'JetBrains Mono', monospace; font-weight:700; }
+
+  .card-kobi {
+    border: 4px solid var(--kobi-black);
+    box-shadow: 6px 6px 0px var(--kobi-black);
+    background-color: #fff;
   }
-  .badge-updated{
-    font-family:'JetBrains Mono', monospace;
-    font-size:11px; font-weight:800;
-    border:2px solid var(--ink);
-    background:#fff;
-    padding:6px 10px;
-    letter-spacing:0.5px;
-    box-shadow:2px 2px 0px var(--ink);
+  @media (min-width: 640px) {
+    .card-kobi { box-shadow: 10px 10px 0px var(--kobi-black); }
   }
-  .header-strip{ display:grid; grid-template-columns:repeat(4,1fr); height:6px; }
-  .header-strip div:nth-child(1){background:var(--orange);}
-  .header-strip div:nth-child(2){background:var(--blue);}
-  .header-strip div:nth-child(3){background:var(--red);}
-  .header-strip div:nth-child(4){background:var(--ink);}
-  .hero{
-    padding:clamp(28px,6vw,56px) clamp(16px,4vw,48px) clamp(20px,4vw,40px);
-    border-bottom:4px solid var(--ink);
-    background:#fff;
-  }
-  .hero-grid{
-    display:grid; grid-template-columns: 1fr auto; gap:24px; align-items:end;
-    max-width:1100px; margin:0 auto;
-  }
-  .status-eyebrow{
-    font-family:'JetBrains Mono', monospace;
-    font-size:12px; font-weight:800; letter-spacing:2px;
-    color:#6b6b62; margin-bottom:14px; text-transform:uppercase;
-  }
-  .status-line{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
-  .status-dot{
-    width:22px; height:22px; border:3px solid var(--ink); border-radius:50%;
-    flex-shrink:0; position:relative; box-shadow:2px 2px 0px var(--ink);
-  }
-  .status-dot::after{ content:""; position:absolute; inset:3px; border-radius:50%; background:var(--unknown); }
-  .status-dot.up::after{background:var(--up);}
-  .status-dot.down::after{background:var(--down);}
-  .status-dot.pulse::after{animation:pulse 1.6s ease-in-out infinite;}
-  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.35;} }
-  .status-word{ font-size:clamp(38px,7vw,64px); line-height:0.95; letter-spacing:-1px; font-weight:900; font-style:italic; }
-  .status-word .up{color:var(--up);}
-  .status-word .down{color:var(--down);}
-  .status-sub{ font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:600; color:#4a4a44; margin-top:10px; }
-  .last-checked{ text-align:right; font-family:'JetBrains Mono', monospace; }
-  .last-checked .label{font-size:10px; font-weight:800; letter-spacing:1.5px; color:#6b6b62; margin-bottom:6px;}
-  .last-checked .val{font-size:14px; font-weight:800;}
-  .section-label{
-    max-width:1100px; margin:0 auto; padding:20px clamp(16px,4vw,48px) 0;
-    display:flex; align-items:center; gap:10px;
-  }
-  .section-label .sq{width:14px; height:14px; background:var(--orange); border:2px solid var(--ink);}
-  .section-label h2{ font-size:15px; font-weight:900; letter-spacing:0.3px; text-transform:uppercase; font-style:italic; }
-  .section-label .count{
-    font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:800;
-    border:2px solid var(--ink); background:#fff; padding:2px 8px;
-    margin-left:auto; box-shadow:2px 2px 0px var(--ink);
-  }
-  .panel-wrap{ max-width:1100px; margin:0 auto; padding:16px clamp(16px,4vw,48px) 8px; }
-  .panel{ border:3px solid var(--ink); background:#fff; padding:18px; box-shadow:6px 6px 0px var(--ink); }
-  .panel-hint{ font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:600; color:#6b6b62; margin-bottom:14px; }
-  .strip{ display:grid; grid-template-columns: repeat(auto-fill, minmax(9px,1fr)); gap:3px; }
-  .cell{ aspect-ratio:1/2.2; background:var(--unknown); position:relative; cursor:default; border:1px solid var(--ink); }
-  .cell.up{background:var(--up);}
-  .cell.down{background:var(--down);}
-  .cell:hover::after{
+
+  .strip-grid { display:grid; grid-template-columns: repeat(24, minmax(0, 1fr)); gap:4px; }
+  @media (max-width: 640px){ .strip-grid { grid-template-columns: repeat(8, minmax(0, 1fr)); } }
+
+  .pattern-bar { display: grid; grid-template-columns: repeat(4, 1fr); width:100%; height:8px; }
+  .pattern-bar > div:nth-child(1) { background-color: var(--kobi-orange); }
+  .pattern-bar > div:nth-child(2) { background-color: var(--kobi-blue); }
+  .pattern-bar > div:nth-child(3) { background-color: var(--kobi-red); }
+  .pattern-bar > div:nth-child(4) { background-color: var(--kobi-black); }
+
+  .hist-cell { aspect-ratio: 1/1; border:1px solid var(--kobi-black); border-radius:3px; background:var(--kobi-unknown); position:relative; cursor:default; transition: transform 0.12s ease, box-shadow 0.12s ease; }
+  .hist-cell:hover{ transform: translateY(-3px); box-shadow: 2px 3px 0px var(--kobi-black); z-index:10; }
+  .hist-cell.up { background: var(--kobi-up); }
+  .hist-cell.down { background: var(--kobi-down); }
+  .hist-cell:hover::after{
     content:attr(data-tip); position:absolute; bottom:calc(100% + 6px); left:50%;
-    transform:translateX(-50%); background:var(--ink); color:var(--paper);
+    transform:translateX(-50%); background:#000; color:#fff;
     font-family:'JetBrains Mono', monospace; font-size:10px; font-weight:700;
-    padding:5px 8px; white-space:nowrap; z-index:5; border:2px solid var(--orange);
+    padding:5px 8px; white-space:nowrap; z-index:20; border:2px solid var(--kobi-orange);
   }
-  .strip-axis{
-    display:flex; justify-content:space-between; font-family:'JetBrains Mono', monospace;
-    font-size:10px; font-weight:700; color:#8a8a80; margin-top:8px;
+
+  .status-dot {
+    width:28px; height:28px; border-radius:50%; border:2px solid var(--kobi-black);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    box-shadow: 2px 2px 0px #000000; position:relative;
   }
-  .legend{
-    display:flex; gap:18px; margin-top:16px; flex-wrap:wrap;
-    font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:800;
-  }
-  .legend span{display:flex; align-items:center; gap:6px;}
-  .legend i{width:11px; height:11px; display:inline-block; border:1.5px solid var(--ink);}
-  .legend .up i{background:var(--up);}
-  .legend .down i{background:var(--down);}
-  .legend .unknown i{background:var(--unknown);}
-  .log-wrap{max-width:1100px; margin:0 auto; padding:24px clamp(16px,4vw,48px) 0;}
-  .log-list{
-    border:3px solid var(--ink); background:#fff; max-height:340px;
-    overflow-y:auto; box-shadow:6px 6px 0px var(--ink);
-  }
-  .log-row{
-    display:grid; grid-template-columns: 90px 1fr 90px; gap:12px; align-items:center;
-    padding:11px 16px; border-bottom:1.5px solid #e4e2da;
-    font-family:'JetBrains Mono', monospace; font-size:12.5px;
-  }
-  .log-row:last-child{border-bottom:none;}
-  .log-row .tag{
-    font-weight:800; font-size:10.5px; letter-spacing:0.5px; padding:3px 7px;
-    width:fit-content; color:#fff; border:1.5px solid var(--ink);
-  }
-  .log-row .tag.up{background:var(--up);}
-  .log-row .tag.down{background:var(--down);}
-  .log-row .time{color:#4a4a44; font-weight:700;}
-  .log-row .rel{color:#9a9a90; text-align:right; font-size:11px; font-weight:600;}
-  .empty{
-    font-family:'JetBrains Mono', monospace; font-size:12px; font-weight:600; color:#8a8a80;
-    padding:30px 16px; text-align:center;
-  }
-  .note{
-    max-width:1100px; margin:28px auto 0;
-    margin-left:clamp(16px,4vw,48px); margin-right:clamp(16px,4vw,48px);
-    border-left:5px solid var(--orange);
-    border-top:2px solid var(--ink); border-right:2px solid var(--ink); border-bottom:2px solid var(--ink);
-    padding:12px 16px; background:#fff;
-    font-family:'JetBrains Mono', monospace; font-size:12px; font-weight:600;
-    color:#3a3a34; line-height:1.6;
-  }
-  footer{
-    margin-top:44px; padding:18px clamp(16px,4vw,48px); border-top:4px solid var(--ink); background:#fff;
-    display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
-    font-family:'JetBrains Mono', monospace; font-size:10.5px; font-weight:700; color:#8a8a80; letter-spacing:0.3px;
-  }
+  .status-dot::after{ content:""; position:absolute; inset:3px; border-radius:50%; background:var(--kobi-unknown); }
+  .status-dot.up::after{ background:var(--kobi-up); }
+  .status-dot.down::after{ background:var(--kobi-down); }
+  .status-dot.pulse::after{ animation:pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.35;} }
   @media (prefers-reduced-motion: reduce){ .status-dot.pulse::after{animation:none;} }
-  @media (max-width:560px){
-    .hero-grid{grid-template-columns:1fr;}
-    .last-checked{text-align:left;}
-    .log-row{grid-template-columns:70px 1fr; grid-template-rows:auto auto; font-size:11.5px;}
-    .log-row .rel{grid-column:2; text-align:left;}
+
+  /* ===== HEADER ===== */
+  .site-header{ background:#fff; border-bottom:4px solid var(--kobi-black); position:sticky; top:0; z-index:30; }
+  .header-inner{
+    max-width:1280px; margin:0 auto; padding:16px 16px;
+    display:flex; justify-content:space-between; align-items:center;
   }
+  @media (min-width:640px){ .header-inner{ padding:20px 24px; } }
+  @media (min-width:1024px){ .header-inner{ padding:20px 40px; } }
+  .header-left{ display:flex; align-items:center; gap:12px; min-width:0; }
+  .logo-box{ width:32px; height:32px; flex-shrink:0; }
+  @media (min-width:1024px){ .logo-box{ width:36px; height:36px; } }
+  .logo-box svg{ width:100%; height:100%; }
+  .logo-text-wrap{ min-width:0; }
+  .logo-title-row{ display:flex; align-items:center; gap:8px; }
+  .logo-title{ font-weight:900; font-style:italic; font-size:16px; line-height:1; color:#000; letter-spacing:-0.16px; margin:0; }
+  @media (min-width:1024px){ .logo-title{ font-size:18px; } }
+  .logo-badge{
+    display:none; background:#000; color:#fff; font-size:9px; font-weight:800;
+    padding:2px 6px; text-transform:uppercase; letter-spacing:0.9px;
+  }
+  @media (min-width:640px){ .logo-badge{ display:inline-block; } }
+  .logo-sub{
+    font-size:9px; text-transform:uppercase; letter-spacing:1.8px; color:var(--kobi-blue);
+    font-weight:800; margin:2px 0 0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  @media (min-width:1024px){ .logo-sub{ font-size:10px; } }
+  .header-right{ display:flex; align-items:center; gap:8px; }
+  @media (min-width:640px){ .header-right{ gap:12px; } }
+  .fetch-badge{
+    font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:900;
+    border:2px solid var(--kobi-black); background:#fff; padding:6px 10px;
+    box-shadow:2px 2px 0px #000; text-transform:uppercase; letter-spacing:0.2px;
+  }
+
+  /* ===== MAIN ===== */
+  .main{ flex:1; max-width:1280px; margin:0 auto; width:100%; padding:24px 16px 32px; }
+  @media (min-width:640px){ .main{ padding:32px 24px; } }
+  @media (min-width:1024px){ .main{ padding:32px 40px; } }
+  .main > * + * { margin-top:24px; }
+
+  /* Banner */
+  .banner{ padding:20px; }
+  @media (min-width:640px){ .banner{ padding:24px; } }
+  .banner-inner{ display:flex; flex-direction:column; justify-content:space-between; gap:20px; }
+  @media (min-width:640px){ .banner-inner{ flex-direction:row; align-items:center; gap:24px; } }
+  .banner-left > * + *{ margin-top:6px; }
+  .eyebrow-row{ display:flex; align-items:center; gap:8px; }
+  .eyebrow-label{ font-size:12px; font-weight:900; text-transform:uppercase; color:#737373; letter-spacing:0.6px; }
+  .eyebrow-dot{ display:inline-block; width:6px; height:6px; border-radius:50%; background:rgba(0,0,0,0.4); }
+  .eyebrow-status{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.2px; }
+  .status-row{ display:flex; align-items:center; gap:14px; padding-top:2px; }
+  .status-word-group{ display:flex; align-items:baseline; gap:8px; }
+  .status-word{ font-weight:900; font-size:30px; letter-spacing:-0.6px; text-transform:uppercase; line-height:1; }
+  @media (min-width:640px){ .status-word{ font-size:36px; } }
+  .status-word-sub{ font-family:'JetBrains Mono', monospace; font-size:12px; color:#a3a3a3; font-weight:700; display:none; }
+  @media (min-width:640px){ .status-word-sub{ display:inline; } }
+  .status-sub{ font-size:14px; font-weight:500; color:#525252; padding-top:4px; margin:0; }
+  .banner-right{ padding-top:12px; border-top:2px solid #f5f5f5; }
+  @media (min-width:640px){ .banner-right{ text-align:right; padding-top:0; border-top:none; } }
+  .banner-right > * + *{ margin-top:4px; }
+  .last-checked-label{ font-family:'JetBrains Mono', monospace; font-size:12px; font-weight:900; text-transform:uppercase; color:#737373; letter-spacing:0.6px; }
+  .last-checked-value{ font-family:'JetBrains Mono', monospace; font-weight:900; color:#000; font-size:16px; letter-spacing:-0.16px; margin:0; }
+  @media (min-width:640px){ .last-checked-value{ font-size:18px; } }
+
+  .text-up{ color:#059669; }
+  .text-down{ color:#dc2626; }
+  .text-neutral{ color:#000; }
+  .eyebrow-up{ color:#059669; }
+  .eyebrow-down{ color:#dc2626; }
+  .eyebrow-neutral{ color:#737373; }
+
+  /* Tabs */
+  .tabs{ display:flex; align-items:center; gap:8px; border-bottom:2px solid var(--kobi-black); padding-bottom:8px; flex-wrap:wrap; }
+  .tab-btn{
+    padding:8px 16px; font-size:12px; font-weight:900; text-transform:uppercase;
+    border:2px solid var(--kobi-black); background:#fff; color:#000; cursor:pointer;
+  }
+  .tab-btn:hover{ background:#FFF0E5; }
+  .tab-btn.active{ background:#000; color:#fff; box-shadow:2px 2px 0px var(--kobi-orange); }
+  .tab-btn.active:hover{ background:#000; }
+
+  /* Panel histogram */
+  .panel{ padding:20px; }
+  @media (min-width:640px){ .panel{ padding:24px; } }
+  .panel-header{ display:flex; flex-direction:column; justify-content:space-between; gap:8px; margin-bottom:16px; padding-bottom:12px; border-bottom:2px solid var(--kobi-black); }
+  @media (min-width:640px){ .panel-header{ flex-direction:row; align-items:center; } }
+  .panel-header-left{ display:flex; align-items:center; gap:8px; }
+  .panel-dot{ width:14px; height:14px; background:var(--kobi-blue); border:1px solid #000; flex-shrink:0; }
+  .panel-title{ color:#000; font-weight:900; font-size:14px; font-style:italic; text-transform:uppercase; letter-spacing:0.7px; margin:0; }
+  @media (min-width:1024px){ .panel-title{ font-size:16px; } }
+  .legend{ display:flex; align-items:center; gap:12px; font-size:11px; font-weight:700; color:#475569; font-family:'JetBrains Mono', monospace; }
+  .legend-item{ display:flex; align-items:center; gap:4px; }
+  .legend-swatch{ width:10px; height:10px; border:1px solid #000; display:inline-block; }
+  .panel-desc{ font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:600; color:#64748b; margin:0 0 12px; }
+  .strip-footer{
+    display:flex; justify-content:space-between; align-items:center; font-size:10px; font-weight:800;
+    text-transform:uppercase; color:#64748b; letter-spacing:0.5px; padding-top:8px;
+    border-top:1px solid #e2e8f0; font-family:'JetBrains Mono', monospace; margin-top:12px;
+  }
+  .strip-footer .strong{ color:#000; font-weight:900; }
+  .strip-empty{ font-family:'JetBrains Mono', monospace; font-size:12px; font-weight:600; color:#94a3b8; text-align:center; padding:24px 0; grid-column:1 / -1; }
+
+  /* Logs panel */
+  .logs-panel{ padding:20px; }
+  @media (min-width:640px){ .logs-panel{ padding:24px; } }
+  .logs-panel > * + *{ margin-top:12px; }
+  .logs-panel.hidden{ display:none; }
+  .logs-header{ display:flex; justify-content:space-between; align-items:center; padding-bottom:8px; border-bottom:2px solid var(--kobi-black); }
+  .logs-title{ font-size:12px; font-weight:900; text-transform:uppercase; color:#000; font-family:'JetBrains Mono', monospace; margin:0; }
+  .logs-count{ font-family:'JetBrains Mono', monospace; font-size:10px; font-weight:800; text-transform:uppercase; color:#64748b; }
+  .log-list{ display:flex; flex-direction:column; gap:10px; max-height:420px; overflow-y:auto; }
+  .log-empty, .log-loading{ font-family:'JetBrains Mono', monospace; font-size:12px; font-weight:600; color:#94a3b8; text-align:center; padding:32px 0; }
+  .log-item{
+    padding:12px; background:#f8fafc; border:2px solid var(--kobi-black);
+    display:flex; flex-direction:column; justify-content:space-between; gap:8px;
+    box-shadow:2px 2px 0px #000000;
+  }
+  @media (min-width:640px){ .log-item{ flex-direction:row; align-items:center; } }
+  .log-item-left{ display:flex; align-items:center; gap:12px; font-family:'JetBrains Mono', monospace; font-size:12px; }
+  .log-tag{ font-weight:900; font-size:10px; text-transform:uppercase; padding:2px 8px; border:1px solid #000; color:#fff; }
+  .log-tag.up{ background:var(--kobi-up); }
+  .log-tag.down{ background:var(--kobi-down); }
+  .log-time{ font-weight:700; color:#404040; }
+  .log-relative{ font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:600; color:#94a3b8; }
+
+  /* Note box */
+  .note-box{
+    border-left:4px solid var(--kobi-orange); border-top:2px solid var(--kobi-black);
+    border-right:2px solid var(--kobi-black); border-bottom:2px solid var(--kobi-black);
+    background:#fff; padding:16px; font-family:'JetBrains Mono', monospace; font-size:12px;
+    font-weight:600; color:#404040; line-height:1.6;
+  }
+
+  /* Footer */
+  .site-footer{ margin-top:24px; background:#fff; border-top:4px solid var(--kobi-black); }
+  .footer-inner{
+    max-width:1280px; margin:0 auto; padding:20px 16px; display:flex; flex-direction:column;
+    align-items:center; justify-content:space-between; gap:12px; font-family:'JetBrains Mono', monospace;
+    font-size:10.5px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.2px;
+  }
+  @media (min-width:640px){ .footer-inner{ padding:20px 24px; flex-direction:row; } }
+  @media (min-width:1024px){ .footer-inner{ padding:20px 40px; } }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="brand">
-    <svg class="mark" viewBox="0 0 261.46869 226.99396" xmlns="http://www.w3.org/2000/svg">
-      <g transform="translate(-295.59564,-210.42621)">
-        <g transform="translate(-336.30728,-319.91732)">
-          <path style="fill:#ff791a" d="m 791.68952,580.78644 14.526,25.22147 -29.0525,50.44321 -14.5261,-25.22133 z"/>
-          <path style="fill:#ff791a" d="m 762.63752,530.34353 14.526,25.22144 -43.5787,75.66485 43.5784,75.66431 -14.5261,25.22063 -43.5784,-75.66364 -58.1047,100.88599 h -29.0511 z"/>
-          <path style="fill:#000000" d="m 733.58482,681.67242 -14.526,25.22147 29.0525,50.44321 14.5261,-25.22133 z"/>
-          <path style="fill:#f91a1a" d="m 719.05882,706.89389 29.0522,50.44321 h -58.1044 z"/>
-          <path style="fill:#4781d1" d="m 849.79342,681.67232 43.5782,75.66444 h -87.1561 z"/>
-          <path style="fill:#4781d1" d="m 820.74152,631.22939 14.526,25.22147 -58.1038,100.88663 -29.0525,-7.6e-4 z"/>
-          <path style="fill:#000000" d="m 762.63692,631.22982 -14.526,25.22147 29.0525,50.44321 14.5261,-25.22133 z"/>
-          <path style="fill:#000000" d="m 657.72638,661.95062 a 50,50 0 0 1 -25,-43.30127 50,50 0 0 1 25,-43.30127 50,50 0 0 1 50,0 l -25,43.30127 z"/>
-        </g>
-      </g>
-    </svg>
-    <div class="brand-text">
-      <div class="t1">KOBI PORTAL</div>
-      <div class="t2">Status Monitor</div>
-    </div>
-  </div>
-  <div class="badge-updated mono" id="fetchBadge">MEMUAT...</div>
-</header>
-<div class="header-strip"><div></div><div></div><div></div><div></div></div>
-
-<section class="hero">
-  <div class="hero-grid">
-    <div>
-      <div class="status-eyebrow">STATUS SAAT INI</div>
-      <div class="status-line">
-        <div class="status-dot pulse" id="statusDot"></div>
-        <div class="status-word" id="statusWord">MEMUAT<span>…</span></div>
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <div class="logo-box">
+          <svg viewBox="0 0 261.46869 226.99396">
+            <g transform="translate(-295.59564,-210.42621)"><g transform="translate(-336.30728,-319.91732)">
+              <path style="fill:#ff791a" d="m 791.68952,580.78644 14.526,25.22147 -29.0525,50.44321 -14.5261,-25.22133 z" />
+              <path style="fill:#ff791a" d="m 762.63752,530.34353 14.526,25.22144 -43.5787,75.66485 43.5784,75.66431 -14.5261,25.22063 -43.5784,-75.66364 -58.1047,100.88599 h -29.0511 z" />
+              <path style="fill:#000000" d="m 733.58482,681.67242 -14.526,25.22147 29.0525,50.44321 14.5261,-25.22133 z" />
+              <path style="fill:#f91a1a" d="m 719.05882,706.89389 29.0522,50.44321 h -58.1044 z" />
+              <path style="fill:#4781d1" d="m 849.79342,681.67232 43.5782,75.66444 h -87.1561 z" />
+              <path style="fill:#4781d1" d="m 820.74152,631.22939 14.526,25.22147 -58.1038,100.88663 -29.0525,-7.6e-4 z" />
+              <path style="fill:#000000" d="m 762.63692,631.22982 -14.526,25.22147 29.0525,50.44321 14.5261,-25.22133 z" />
+              <path style="fill:#000000" d="m 657.72638,661.95062 a 50,50 0 0 1 -25,-43.30127 50,50 0 0 1 25,-43.30127 50,50 0 0 1 50,0 l -25,43.30127 z" />
+            </g></g>
+          </svg>
+        </div>
+        <div class="logo-text-wrap">
+          <div class="logo-title-row">
+            <p class="logo-title">KOBI PORTAL</p>
+            <span class="logo-badge">STATUS MONITOR</span>
+          </div>
+          <p class="logo-sub">Infrastructure &amp; Tunnel Status</p>
+        </div>
       </div>
-      <div class="status-sub" id="statusSub">Menghubungi server data…</div>
+
+      <div class="header-right">
+        <span id="fetchBadge" class="fetch-badge">MEMUAT...</span>
+      </div>
     </div>
-    <div class="last-checked">
-      <div class="label">TERAKHIR DICEK</div>
-      <div class="val" id="lastChecked">—</div>
+    <div class="pattern-bar header-strip"><div></div><div></div><div></div><div></div></div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- Top Banner: Status Saat Ini -->
+    <div class="card-kobi banner">
+      <div class="banner-inner">
+        <div class="banner-left">
+          <div class="eyebrow-row">
+            <span class="eyebrow-label">STATUS SAAT INI</span>
+            <span class="eyebrow-dot"></span>
+            <span class="eyebrow-status eyebrow-neutral" id="statusEyebrow">MEMUAT</span>
+          </div>
+
+          <div class="status-row">
+            <div id="statusDot" class="status-dot pulse"></div>
+            <div class="status-word-group">
+              <span class="status-word" id="statusWord">MEMUAT…</span>
+              <span class="status-word-sub" id="statusWordSub">/ —</span>
+            </div>
+          </div>
+
+          <p class="status-sub" id="statusSub">Menghubungi server data…</p>
+        </div>
+
+        <div class="banner-right">
+          <div class="last-checked-label">TERAKHIR DICEK</div>
+          <p class="last-checked-value" id="lastChecked">—</p>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
 
-<div class="section-label">
-  <div class="sq"></div>
-  <h2>Panel 24 Jam Terakhir</h2>
-  <div class="count" id="cellCount">0 CEK</div>
-</div>
-
-<div class="panel-wrap">
-  <div class="panel">
-    <div class="panel-hint">Tiap kotak = satu pemeriksaan (± 5 menit). Arahkan kursor untuk lihat jam.</div>
-    <div class="strip" id="strip"></div>
-    <div class="strip-axis">
-      <span id="axisStart">-24 JAM</span>
-      <span>SEKARANG</span>
+    <!-- Section Tabs -->
+    <div class="tabs">
+      <button type="button" onclick="switchServerTab('histogram')" id="btn-stab-histogram" class="tab-btn active">PANEL 24 JAM</button>
+      <button type="button" onclick="switchServerTab('logs')" id="btn-stab-logs" class="tab-btn">LOG KEJADIAN (<span id="logCount">0</span>)</button>
     </div>
-    <div class="legend">
-      <span class="up"><i></i> NYALA</span>
-      <span class="down"><i></i> MATI</span>
-      <span class="unknown"><i></i> BELUM ADA DATA</span>
+
+    <!-- Tab 1: Histogram -->
+    <div id="server-tab-histogram" class="card-kobi panel">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <span class="panel-dot"></span>
+          <h3 class="panel-title">PANEL 24 JAM TERAKHIR</h3>
+        </div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--kobi-up)"></span> NYALA</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--kobi-down)"></span> MATI</span>
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--kobi-unknown)"></span> BELUM ADA DATA</span>
+        </div>
+      </div>
+
+      <p class="panel-desc">Tiap kotak = satu pemeriksaan (± 5 menit) — menampilkan pemeriksaan terbaru. Arahkan kursor untuk lihat jam.</p>
+      <div class="strip-grid" id="strip"></div>
+
+      <div class="strip-footer">
+        <span id="axisStart">-24 JAM</span>
+        <span class="strong"><span id="cellCount">0 CEK</span></span>
+        <span>SEKARANG</span>
+      </div>
     </div>
-  </div>
-</div>
 
-<div class="section-label">
-  <div class="sq"></div>
-  <h2>Log Kejadian</h2>
-  <div class="count" id="logCount">0 ENTRI</div>
-</div>
+    <!-- Tab 2: Logs -->
+    <div id="server-tab-logs" class="card-kobi logs-panel hidden">
+      <div class="logs-header">
+        <p class="logs-title">Log Kejadian</p>
+        <span class="logs-count"><span id="logCount2">0</span> Entri</span>
+      </div>
+      <div id="logList" class="log-list">
+        <div class="log-loading">Memuat log…</div>
+      </div>
+    </div>
 
-<div class="log-wrap">
-  <div class="log-list" id="logList">
-    <div class="empty">Memuat log…</div>
-  </div>
-</div>
+    <!-- Catatan -->
+    <div class="note-box">
+      CATATAN: sistem ini dipantau tidak 24/7 secara sengaja — hanya menyala pada jadwal tertentu.
+      Status "MATI" di luar pola biasa kemungkinan disebabkan listrik padam atau kuota jaringan habis,
+      bukan berarti sistem error.
+    </div>
+  </main>
 
-<div class="note">
-  CATATAN: sistem ini dipantau tidak 24/7 secara sengaja — hanya menyala pada jadwal tertentu.
-  Status "MATI" di luar pola biasa kemungkinan disebabkan listrik padam atau kuota jaringan habis,
-  bukan berarti sistem error.
-</div>
-
-<footer>
-  <span>DATA DIPERBARUI OTOMATIS TIAP 5 MENIT</span>
-  <span>KOBI STUDIO · DIBANGUN DENGAN GITHUB ACTIONS</span>
-</footer>
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="pattern-bar footer-strip"><div></div><div></div><div></div><div></div></div>
+    <div class="footer-inner">
+      <span>DATA DIPERBARUI OTOMATIS TIAP 5 MENIT</span>
+      <span>KOBI STUDIO · DIBANGUN DENGAN GITHUB ACTIONS</span>
+    </div>
+  </footer>
 
 <script>
 // CATATAN FORMAT DATA: halaman ini baca "data/log.json" (bukan status.json) -
@@ -271,6 +347,25 @@
 // SEMUA riwayat cek (dibatasi 5000 entri terakhir di sisi workflow), BUKAN
 // objek ringkasan siap-pakai. current_status/last_checked/last_24h dihitung
 // di sini (client-side) dari array itu.
+
+function switchServerTab(tab){
+  const bHisto = document.getElementById('btn-stab-histogram');
+  const bLogs = document.getElementById('btn-stab-logs');
+  const tHisto = document.getElementById('server-tab-histogram');
+  const tLogs = document.getElementById('server-tab-logs');
+
+  [tHisto, tLogs].forEach(t => t.classList.add('hidden'));
+  [bHisto, bLogs].forEach(b => b.classList.remove('active'));
+
+  if(tab === 'histogram'){
+    tHisto.classList.remove('hidden');
+    bHisto.classList.add('active');
+  } else {
+    tLogs.classList.remove('hidden');
+    bLogs.classList.add('active');
+  }
+}
+
 async function loadStatus(){
   const fetchBadge = document.getElementById('fetchBadge');
   try{
@@ -284,15 +379,13 @@ async function loadStatus(){
     fetchBadge.textContent = 'GAGAL MUAT DATA';
     document.getElementById('statusWord').textContent = 'TIDAK DIKETAHUI';
     document.getElementById('statusSub').textContent = 'Tidak bisa mengambil data/log.json';
-    document.getElementById('logList').innerHTML = '<div class="empty">Data belum tersedia. Pastikan workflow Ping Monitor sudah pernah berjalan.</div>';
+    document.getElementById('logList').innerHTML = '<div class="log-empty">Data belum tersedia. Pastikan workflow Ping Monitor sudah pernah berjalan.</div>';
   }
 }
 
 function fmtTime(iso){
   const d = new Date(iso);
-  return d.toLocaleString('id-ID', {
-    day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', hour12:false
-  });
+  return d.toLocaleString('id-ID', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', hour12:false });
 }
 
 function relTime(iso){
@@ -305,10 +398,46 @@ function relTime(iso){
   return Math.round(hrs/24) + ' hari lalu';
 }
 
+const STRIP_LATEST_COUNT = 24; // jumlah kotak terbaru yang ditampilkan
+let stripEntries = [];
+
+function renderStripLatest(){
+  const strip = document.getElementById('strip');
+  const pageItems = stripEntries.slice(0, STRIP_LATEST_COUNT);
+
+  strip.innerHTML = '';
+  pageItems.forEach(e => {
+    const cell = document.createElement('div');
+    cell.className = 'hist-cell ' + (e.status === 'up' ? 'up' : e.status === 'down' ? 'down' : '');
+    cell.setAttribute('data-tip', fmtTime(e.time) + ' — ' + (e.status === 'up' ? 'NYALA' : 'MATI'));
+    strip.appendChild(cell);
+  });
+  if(pageItems.length === 0){
+    strip.innerHTML = '<div class="strip-empty">Belum ada data 24 jam terakhir.</div>';
+  }
+}
+
+function groupIntoEpisodes(entriesTeraturLama){
+  // entriesTeraturLama: array terurut dari LAMA ke BARU
+  const episodes = [];
+  for(const e of entriesTeraturLama){
+    const last = episodes[episodes.length - 1];
+    if(last && last.status === e.status){
+      last.end = e.time; // perpanjang episode yang sama
+      last.count++;
+    } else {
+      episodes.push({ status: e.status, start: e.time, end: e.time, count: 1 });
+    }
+  }
+  return episodes;
+}
+
 function render(log){
   const dot = document.getElementById('statusDot');
   const word = document.getElementById('statusWord');
+  const wordSub = document.getElementById('statusWordSub');
   const sub = document.getElementById('statusSub');
+  const eyebrow = document.getElementById('statusEyebrow');
   const lastChecked = document.getElementById('lastChecked');
 
   const terurut = [...log].sort((a, b) => new Date(a.time) - new Date(b.time));
@@ -317,17 +446,30 @@ function render(log){
 
   dot.className = 'status-dot pulse ' + (status === 'up' ? 'up' : status === 'down' ? 'down' : '');
 
+  word.classList.remove('text-up','text-down','text-neutral');
+  eyebrow.classList.remove('eyebrow-up','eyebrow-down','eyebrow-neutral');
+
   if(status === 'up'){
-    word.textContent = 'MENYALA';
-    word.classList.add('up');
+    word.textContent = 'ONLINE';
+    word.classList.add('text-up');
+    wordSub.textContent = '/ MENYALA';
     sub.textContent = 'Sistem merespons normal saat pemeriksaan terakhir.';
+    eyebrow.textContent = 'TUNNEL ACTIVE';
+    eyebrow.classList.add('eyebrow-up');
   } else if(status === 'down'){
-    word.textContent = 'MATI';
-    word.classList.add('down');
+    word.textContent = 'OFFLINE';
+    word.classList.add('text-down');
+    wordSub.textContent = '/ MATI';
     sub.textContent = 'Tidak merespons — bisa jadi sengaja mati, listrik padam, atau kuota habis.';
+    eyebrow.textContent = 'TUNNEL DOWN';
+    eyebrow.classList.add('eyebrow-down');
   } else {
     word.textContent = 'BELUM ADA DATA';
+    word.classList.add('text-neutral');
+    wordSub.textContent = '/ —';
     sub.textContent = 'Menunggu hasil pemeriksaan pertama.';
+    eyebrow.textContent = 'MENUNGGU DATA';
+    eyebrow.classList.add('eyebrow-neutral');
   }
 
   lastChecked.textContent = terbaru ? fmtTime(terbaru.time) : '—';
@@ -335,45 +477,47 @@ function render(log){
   const batas24Jam = Date.now() - 24 * 60 * 60 * 1000;
   const entries = terurut.filter(e => new Date(e.time).getTime() >= batas24Jam);
 
-  const strip = document.getElementById('strip');
   document.getElementById('cellCount').textContent = entries.length + ' CEK';
 
-  strip.innerHTML = '';
-  entries.forEach(e => {
-    const cell = document.createElement('div');
-    cell.className = 'cell ' + (e.status === 'up' ? 'up' : e.status === 'down' ? 'down' : '');
-    cell.setAttribute('data-tip', fmtTime(e.time) + ' — ' + (e.status === 'up' ? 'NYALA' : 'MATI'));
-    strip.appendChild(cell);
-  });
-  if(entries.length === 0){
-    strip.innerHTML = '<div class="empty" style="grid-column:1/-1;">Belum ada data 24 jam terakhir.</div>';
-  }
+  // urutan terbaru dulu, ambil yang paling anyar aja
+  stripEntries = [...entries].reverse();
+  renderStripLatest();
 
   if(entries.length > 0){
     document.getElementById('axisStart').textContent = fmtTime(entries[0].time).toUpperCase();
   }
 
   const logList = document.getElementById('logList');
-  document.getElementById('logCount').textContent = entries.length + ' ENTRI';
+  const episodes = groupIntoEpisodes(entries); // entries urutan lama->baru
+  document.getElementById('logCount').textContent = episodes.length;
+  document.getElementById('logCount2').textContent = episodes.length;
 
-  if(entries.length === 0){
-    logList.innerHTML = '<div class="empty">Belum ada entri log.</div>';
+  if(episodes.length === 0){
+    logList.innerHTML = '<div class="log-empty">Belum ada entri log.</div>';
     return;
   }
 
-  const reversed = [...entries].reverse();
-  logList.innerHTML = reversed.map(e => `
-    <div class="log-row">
-      <div class="tag ${e.status === 'up' ? 'up' : 'down'}">${e.status === 'up' ? 'NYALA' : 'MATI'}</div>
-      <div class="time">${fmtTime(e.time)}</div>
-      <div class="rel">${relTime(e.time)}</div>
+  const episodesBaruDulu = [...episodes].reverse();
+  logList.innerHTML = episodesBaruDulu.map((ep, idx) => {
+    const isOngoing = idx === 0; // episode paling atas = status yang masih berlangsung sekarang
+    const rangeText = ep.start === ep.end
+      ? fmtTime(ep.start)
+      : fmtTime(ep.start) + '  →  ' + (isOngoing ? 'SEKARANG' : fmtTime(ep.end));
+    const durasiText = ep.count > 1 ? ep.count + ' kali cek' : '1 kali cek';
+    return `
+    <div class="log-item">
+      <div class="log-item-left">
+        <span class="log-tag ${ep.status === 'up' ? 'up' : 'down'}">${ep.status === 'up' ? 'NYALA' : 'MATI'}</span>
+        <span class="log-time">${rangeText}</span>
+      </div>
+      <span class="log-relative">${durasiText} · ${relTime(ep.end)}</span>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 loadStatus();
 setInterval(loadStatus, 60000); // refresh tiap 1 menit
 </script>
-
 </body>
 </html>
