@@ -1,0 +1,64 @@
+name: Notes History Log
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "notes/notes.txt"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  log:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Pastikan file riwayat ada
+        run: |
+          mkdir -p notes
+          if [ ! -f notes/notes-history.json ]; then
+            echo "[]" > notes/notes-history.json
+          fi
+
+      - name: Bandingkan isi catatan, tambahkan entri kalau berubah (anti-dobel)
+        run: |
+          python3 - <<'EOF'
+          import json, datetime
+
+          path_notes = "notes/notes.txt"
+          path_history = "notes/notes-history.json"
+
+          with open(path_notes, "r", encoding="utf-8") as f:
+              current = f.read().strip()
+
+          try:
+              with open(path_history, "r", encoding="utf-8") as f:
+                  content = f.read().strip()
+                  history = json.loads(content) if content else []
+          except (FileNotFoundError, json.JSONDecodeError):
+              history = []
+
+          last_text = history[-1]["text"] if history else None
+
+          if current != last_text:
+              history.append({
+                  "time": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                  "text": current
+              })
+              # batasi maksimal 500 entri riwayat terakhir
+              history = history[-500:]
+              with open(path_history, "w", encoding="utf-8") as f:
+                  json.dump(history, f, indent=2, ensure_ascii=False)
+              print("Catatan berubah -> entri baru ditambahkan.")
+          else:
+              print("Catatan sama seperti entri terakhir -> dilewati (anti-dobel).")
+          EOF
+
+      - name: Commit & push riwayat catatan (kalau ada perubahan)
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add notes/notes-history.json
+          git diff --quiet --cached || git commit -m "chore: update notes history $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push

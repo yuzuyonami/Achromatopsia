@@ -342,6 +342,14 @@
         <p class="logs-title">Catatan</p>
       </div>
       <div id="notesBox" class="note-box">Memuat catatan…</div>
+
+      <div class="logs-header" style="margin-top:20px;">
+        <p class="logs-title">Riwayat Perubahan Catatan</p>
+        <span class="logs-count"><span id="notesHistCount">0</span> Entri</span>
+      </div>
+      <div id="notesHistList" class="log-list">
+        <div class="log-loading">Memuat riwayat…</div>
+      </div>
     </div>
 
   </main>
@@ -396,6 +404,34 @@ async function loadNotes(){
     box.textContent = text || 'Belum ada catatan.';
   }catch(err){
     box.textContent = 'Gagal memuat notes/notes.txt.';
+  }
+
+  const histList = document.getElementById('notesHistList');
+  const histCount = document.getElementById('notesHistCount');
+  try{
+    const res = await fetch('https://raw.githubusercontent.com/yuzuyonami/Achromatopsia/main/notes/notes-history.json?_=' + Date.now());
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const history = await res.json();
+    if(!Array.isArray(history)) throw new Error('Format notes-history.json tidak sesuai.');
+
+    histCount.textContent = history.length;
+
+    if(history.length === 0){
+      histList.innerHTML = '<div class="log-empty">Belum ada riwayat perubahan catatan.</div>';
+      return;
+    }
+
+    const terbaruDulu = [...history].reverse();
+    histList.innerHTML = terbaruDulu.map(entry => `
+      <div class="log-item">
+        <div class="log-item-left" style="align-items:flex-start;">
+          <span class="log-time" style="white-space:pre-line;">${entry.text}</span>
+        </div>
+        <span class="log-relative">${fmtTime(entry.time)} · ${relTime(entry.time)}</span>
+      </div>
+    `).join('');
+  }catch(err){
+    histList.innerHTML = '<div class="log-empty">Gagal memuat riwayat catatan.</div>';
   }
 }
 
