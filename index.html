@@ -390,12 +390,12 @@ function switchServerTab(tab){
 async function loadNotes(){
   const box = document.getElementById('notesBox');
   try{
-    const res = await fetch('https://raw.githubusercontent.com/yuzuyonami/Achromatopsia/main/catatan/catatan.txt?_=' + Date.now());
+    const res = await fetch('https://raw.githubusercontent.com/yuzuyonami/Achromatopsia/main/notes/notes.txt?_=' + Date.now());
     if(!res.ok) throw new Error('HTTP ' + res.status);
     const text = (await res.text()).trim();
     box.textContent = text || 'Belum ada catatan.';
   }catch(err){
-    box.textContent = 'Gagal memuat catatan/catatan.txt.';
+    box.textContent = 'Gagal memuat notes/notes.txt.';
   }
 }
 
@@ -549,9 +549,13 @@ function render(log){
   }).join('');
 }
 
-loadStatus();
-setInterval(loadStatus, 60000); // refresh tiap 1 menit
-loadNotes();
+function refreshAll(){
+  loadStatus();
+  loadNotes();
+}
+
+refreshAll();
+setInterval(refreshAll, 60000); // refresh semua tab tiap 1 menit
 </script>
 </body>
 </html>
