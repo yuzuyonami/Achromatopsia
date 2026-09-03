@@ -21823,5 +21823,10 @@
     "time": "2026-09-03T07:30:30Z",
     "status": "down",
     "http_code": "502"
+  },
+  {
+    "time": "2026-09-03T07:35:19Z",
+    "status": "down",
+    "http_code": "502"
   }
 ]
