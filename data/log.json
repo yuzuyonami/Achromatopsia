@@ -22318,5 +22318,10 @@
     "time": "2026-09-03T15:45:30Z",
     "status": "down",
     "http_code": "404"
+  },
+  {
+    "time": "2026-09-03T15:50:24Z",
+    "status": "down",
+    "http_code": "404"
   }
 ]
