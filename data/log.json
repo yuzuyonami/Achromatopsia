@@ -1,10 +1,5 @@
 [
   {
-    "time": "2026-09-04T12:45:25Z",
-    "status": "up",
-    "http_code": "200"
-  },
-  {
     "time": "2026-09-04T12:50:24Z",
     "status": "up",
     "http_code": "200"
@@ -24996,6 +24991,11 @@
   },
   {
     "time": "2026-09-21T22:00:37Z",
+    "status": "down",
+    "http_code": "404"
+  },
+  {
+    "time": "2026-09-21T22:05:19Z",
     "status": "down",
     "http_code": "404"
   }
