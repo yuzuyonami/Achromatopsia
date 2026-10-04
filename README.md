@@ -14,6 +14,11 @@
 ## 📦 Repositories
 
 <!-- REPOS:START -->
+| Repository | Visibility | Description |
+|---|---|---|
+| [Achromatopsia](https://github.com/yuzuyonami/Achromatopsia) | Public | KOBI hub: open tools, repository index, tunnel ping monitor, and official docs |
+| [Suffusio](https://github.com/yuzuyonami/Suffusio) | Private 🔒 | Private repository |
+| [Trachoma](https://github.com/yuzuyonami/Trachoma) | Private 🔒 | Private repository |
 <!-- REPOS:END -->
 
 > New repositories will be added to this table as KOBI grow
