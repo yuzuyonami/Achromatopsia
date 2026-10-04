@@ -1,3 +1,12 @@
+# Achromatopsia
+
+**The central hub of KOBI Studio.** Achromatopsia is the public entry point to our projects:
+
+- **Open tools**: free-to-use tools you can use right away.
+- **Repository index**: a map of every KOBI repository, listed below.
+- **Ping monitor**: a GitHub Pages status page that watches our web tunnel.
+- **Official documents**: documents and notes published by KOBI Studio.
+
 ## 🚀 Quick Start
 
 **The central hub of KOBI Studio.** This repository is the entry point to our projects: it holds the core structure, the build orchestration, and links to every repository that makes up KOBI.
@@ -5,14 +14,10 @@
 ## 📦 Repositories
 
 <!-- REPOS:START -->
-| Repository | Visibility | Description |
-|---|---|---|
-| [Achromatopsia](https://github.com/yuzuyonami/Achromatopsia) | Public | Core structure, monorepo & build orchestrator (you are here) |
-| Suffusio | Private | Private repository |
-| Trachoma | Private | Private repository |
 <!-- REPOS:END -->
 
 > New repositories will be added to this table as KOBI grow
+> Private repositories require access. Contact the maintainers if you need it.
 
 Clone the public repository:
 

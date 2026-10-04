@@ -6,25 +6,42 @@ import tomllib
 
 TOML = ".github/repo-descriptions.toml"
 
-# 1. Baca daftar submodule dari .gitmodules
-out = subprocess.run(
-    ["git", "config", "-f", ".gitmodules", "--get-regexp", r"^submodule\..*\.url$"],
-    capture_output=True, text=True,
-).stdout
 
-subs = []
+def sh(*args):
+    return subprocess.run(args, capture_output=True, text=True)
+
+
+def parse_github(url):
+    m = re.search(r"github\.com[:/]([^/]+)/([^/]+?)(?:\.git)?/?$", url.strip())
+    return m.groups() if m else None
+
+
+# 1. Daftar repo: repo utama + semua submodule
+entries = []  # (name, url)
+
+slug = os.environ.get("GITHUB_REPOSITORY")
+if slug:
+    self_url = f"https://github.com/{slug}"
+else:
+    self_url = sh("git", "remote", "get-url", "origin").stdout.strip()
+parsed = parse_github(self_url)
+if parsed:
+    entries.append((parsed[1], f"https://github.com/{parsed[0]}/{parsed[1]}"))
+
+out = sh("git", "config", "-f", ".gitmodules",
+         "--get-regexp", r"^submodule\..*\.url$").stdout
 for line in out.splitlines():
     key, url = line.split(" ", 1)
     name = key[len("submodule."):-len(".url")]
-    subs.append((name, url.strip()))
+    entries.append((name, url.strip()))
 
-# 2. Baca TOML, lalu tambahkan nama yang belum ada (deskripsi dikosongkan)
+# 2. Baca TOML, tambahkan nama yang belum ada (deskripsi dikosongkan)
 custom = {}
 if os.path.exists(TOML):
     with open(TOML, "rb") as f:
         custom = tomllib.load(f)
 
-missing = [n for n, _ in subs if n not in custom]
+missing = [n for n, _ in entries if n not in custom]
 if missing:
     os.makedirs(os.path.dirname(TOML), exist_ok=True)
     needs_newline = False
@@ -44,26 +61,24 @@ if missing:
 rows = [
     "| Repository | Visibility | Description |",
     "|---|---|---|",
-    "| [Achromatopsia](https://github.com/yuzuyonami/Achromatopsia) | Public | "
-    "Core structure, monorepo & build orchestrator (you are here) |",
 ]
 
-for name, url in subs:
-    m = re.search(r"github\.com[:/]([^/]+)/([^/]+?)(?:\.git)?$", url)
-    if not m:
+for name, url in entries:
+    p = parse_github(url)
+    if not p:
         rows.append(f"| {name} | Unknown | {custom.get(name) or '-'} |")
         continue
-    owner, repo = m.groups()
+    owner, repo = p
+    link = f"[{name}](https://github.com/{owner}/{repo})"
 
-    r = subprocess.run(["gh", "api", f"repos/{owner}/{repo}"],
-                       capture_output=True, text=True)
+    r = sh("gh", "api", f"repos/{owner}/{repo}")
     if r.returncode == 0:
         d = json.loads(r.stdout)
         desc = (custom.get(name) or d.get("description") or "-").replace("|", "/")
-        rows.append(f"| [{name}](https://github.com/{owner}/{repo}) | Public | {desc} |")
+        rows.append(f"| {link} | Public | {desc} |")
     else:
         desc = (custom.get(name) or "Private repository").replace("|", "/")
-        rows.append(f"| {name} | Private | {desc} |")
+        rows.append(f"| {link} | Private 🔒 | {desc} |")
 
 table = "\n".join(rows)
 
