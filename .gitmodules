@@ -1,6 +1,8 @@
 [submodule "Suffusio"]
 	path = Suffusio
 	url = git@github.com:yuzuyonami/Suffusio.git
+	update = none
 [submodule "Trachoma"]
 	path = Trachoma
 	url = git@github.com:yuzuyonami/Trachoma.git
+	update = none
