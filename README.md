@@ -8,8 +8,8 @@
 | Repository | Visibility | Description |
 |---|---|---|
 | [Achromatopsia](https://github.com/yuzuyonami/Achromatopsia) | Public | Core structure, monorepo & build orchestrator (you are here) |
-| Suffusio | Private | Isi deskripsi singkat di sini |
-| Trachoma | Private | Isi deskripsi singkat di sini |
+| Suffusio | Private | Private repository |
+| Trachoma | Private | Private repository |
 <!-- REPOS:END -->
 
 > New repositories will be added to this table as KOBI grow
