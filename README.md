@@ -1,5 +1,14 @@
 ## 🚀 Quick Start
 
+**The central hub of KOBI Studio.** This repository is the entry point to our projects: it holds the core structure, the build orchestration, and links to every repository that makes up KOBI.
+
+## 📦 Repositories
+
+<!-- REPOS:START -->
+<!-- REPOS:END -->
+
+> New repositories will be added to this table as KOBI grow
+
 Clone the public repository:
 
 ```bash
