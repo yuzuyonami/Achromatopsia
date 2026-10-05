@@ -21,7 +21,8 @@
 | [Trachoma](https://github.com/yuzuyonami/Trachoma) | Private | Private repository |
 <!-- REPOS:END -->
 
-> New repositories will be added to this table as KOBI grow. /n
+> New repositories will be added to this table as KOBI grow.
+> 
 > Private repositories require access. Contact the maintainers if you need it.
 
 Clone the public repository:
