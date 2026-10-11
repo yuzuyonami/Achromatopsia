@@ -78,7 +78,7 @@ for name, url in entries:
         rows.append(f"| {link} | Public | {desc} |")
     else:
         desc = (custom.get(name) or "Private repository").replace("|", "/")
-        rows.append(f"| {link} | Private 🔒 | {desc} |")
+        rows.append(f"| {link} | Private | {desc} |")
 
 table = "\n".join(rows)
 
