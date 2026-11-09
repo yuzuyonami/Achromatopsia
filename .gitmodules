@@ -6,3 +6,7 @@
 	path = Trachoma
 	url = git@github.com:yuzuyonami/Trachoma.git
 	update = none
+[submodule "Khavlly"]
+	path = Khavlly
+	url = git@github.com:yuzuyonami/Khavlly.git
+	update = none
